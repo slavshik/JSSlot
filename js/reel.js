@@ -1,9 +1,9 @@
 define("reel", [], function(){
 
   function Reel(){
-      this.reelData = ["red","green","blue","yellow","orange"];
+      this.data = [1,1,1,1,1,1,2,3,4,4,3,2,1,0,0,0];
       this.spinPos = 0;
-      this.iconH = 100;
+      this.iconH = 122;
       this.iconCoords = [];
       this.iconIds = [];
       this.idx, offset = 0;
@@ -20,15 +20,15 @@ define("reel", [], function(){
           this.spinPos = this.spinPos % this.spinMax;
           this.offset += this.reelSize * posDelta;
       }
-      this.offset = this.getMax(this.offset, this.reelData.length);
+      this.offset = this.getMax(this.offset, this.data.length);
       this.idx = Math.floor(this.spinPos / this.iconH) + this.offset;
-      this.idx = this.getMax(this.idx, this.reelData.length);
+      this.idx = this.getMax(this.idx, this.data.length);
 
       var id = this.idx;
       for (var i = 0; i < this.reelSize; i++) {
-        this.iconIds[i] = this.reelData[id];
+        this.iconIds[i] = this.data[id];
         id++;
-        if(id >= this.reelData.length) id = 0;
+        if(id >= this.data.length) id = 0;
       }
       this.calcIcons();
   }
