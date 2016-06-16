@@ -10,7 +10,7 @@ define("app", ["libs/easeljs-0.8.2.combined", "reel", "ui", "spinner"], function
 			ui.stage.addChild(reelView.iconsCont);
 
 			createjs.Ticker.addEventListener("tick", handleTick);
-			createjs.Ticker.framerate = 45;
+			createjs.Ticker.framerate = 65;
 
 			function handleTick(){
 				spinner.update();

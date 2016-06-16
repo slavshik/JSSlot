@@ -1,7 +1,7 @@
 define("reel", [], function(){
 
   function Reel(){
-      this.data = [1,1,1,1,1,1,2,3,4,4,3,2,1,0,0,0];
+      this.data = [1,2,3,4,1,1,2,3,4,4,3,2,1,0,0,0];
       this.spinPos = 0;
       this.iconH = 122;
       this.iconCoords = [];
