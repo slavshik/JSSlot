@@ -1,4 +1,4 @@
-define("reel", ["spinner", "spinstate"], function(Spinner, SpinState){
+define("reel", [], function(){
 
   function Reel(){
       this.reelData = ["red","green","blue","yellow","orange"];
@@ -10,23 +10,11 @@ define("reel", ["spinner", "spinstate"], function(Spinner, SpinState){
       this.reelSize = 4;
       this.offset = 0;
       this.spinMax = this.reelSize * this.iconH;
-      this.spinner = new Spinner(this);
-      this.render();
-  }
-  Reel.prototype.toggleSpin = function(){
-    if (this.spinner.state === SpinState.STOPPED){
-      this.spinner.spin();
-    } else {
-      this.spinner.stop();
-    }
+      this.move(0);
   }
   
-  Reel.prototype.render = function(){
-    this.calcSpin();
-    this.calcIcons();
-  };
-  Reel.prototype.calcSpin = function() {
-      this.spinPos += this.spinner.getSpinDelta();
+  Reel.prototype.move = function(delta) {
+      this.spinPos += delta;
       if (this.spinPos >= this.spinMax) {
           var posDelta = Math.floor(this.spinPos / this.spinMax);
           this.spinPos = this.spinPos % this.spinMax;
@@ -42,6 +30,7 @@ define("reel", ["spinner", "spinstate"], function(Spinner, SpinState){
         id++;
         if(id >= this.reelData.length) id = 0;
       }
+      this.calcIcons();
   }
   Reel.prototype.calcIcons = function() {
       for (var i = 0; i < this.reelSize; i++) {

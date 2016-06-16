@@ -1,6 +1,7 @@
-define("app", ["libs/easeljs-0.8.2.combined", "reel", "ui"], function(easel, Reel, ui){
+define("app", ["libs/easeljs-0.8.2.combined", "reel", "ui", "spinner"], function(easel, Reel, ui, Spinner){
 	
 	var reel = new Reel();
+	var spinner = new Spinner(reel);
 	var reelView = new ui.ReelView(reel);
 
 	return {
@@ -8,19 +9,17 @@ define("app", ["libs/easeljs-0.8.2.combined", "reel", "ui"], function(easel, Ree
 			
 			ui.stage.addChild(reelView.iconsCont);
 
-			reel.render();
-
 			createjs.Ticker.addEventListener("tick", handleTick);
 			createjs.Ticker.framerate = 45;
 
 			function handleTick(){
-				reel.spinner.update();
+				spinner.update();
 			    reelView.update();
 				ui.stage.update();
 			}
 		},
 		toggleSpin: function(){
-			reel.toggleSpin();
+			spinner.toggleSpin();
 		}
 	}
 })

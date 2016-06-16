@@ -1,20 +1,24 @@
 define("spinner", ["spinstate", "easing"], function(SpinState, Easing){
 	function Spinner(reel){
-	  this.reel = reel;
-	  this.spinData = {
+	  	this.reel = reel;
+	  	this.seed = {
+	  		current:0,
 	        acceleration:0,
-	        maxSpeed:900,
-	        accDuration:1, 
-	        duration:1.5, 
-	        brakingDuration:2.5
+	        max:900,
+	    };
+	    this.durationOf = {
+	    	acceleration:1, 
+	        spinning:1.5, 
+	        braking:2.5
+	    }
+	    this.timeOf = {
+	    	now: -1,
+	    	spinStart: -1,
+	    	spinStop: -1,
+	    	brakingStart: -1
 	    };
 	    this.startSpinY = 0;
 	    this.spinY = 0;
-	    this.speed = 0;
-	    this.spinStartTime = -1;
-	    this.spinStopTime = -1;
-	    this.currentTime = -1;
-	    this.braking = false;
 	    this.brakingHeight = 0;
 	    this.brakingValue = 0;
 	    this.state = SpinState.STOPPED;
@@ -23,12 +27,12 @@ define("spinner", ["spinstate", "easing"], function(SpinState, Easing){
 		
 	  if (!SpinState.isSpinning(this.state)) return;
 
-	  this.currentTime = Date.now();
+	  this.timeOf.now = Date.now();
 
 	  var easedProgress,
 	      progress;
 	  if(this.state === SpinState.ACCELERATING) {
-	    progress = this.getTimeFrom(this.spinStartTime) / this.spinData.accDuration;
+	    progress = this.getTimeFrom(this.timeOf.spinStart) / this.durationOf.acceleration;
 	    easedProgress = Easing.outQuad(progress);
 	    
 	    this.speed = progress * this.spinData.maxSpeed;
@@ -39,7 +43,7 @@ define("spinner", ["spinstate", "easing"], function(SpinState, Easing){
 	    }
 	  }
 	  if (this.state === SpinState.ACCELERATED) {
-	    if (this.getTimeFrom(this.spinStartTime) > this.spinData.accDuration + this.spinData.duration) {
+	    if (this.getTimeFrom(this.timeOf.spinStart) > this.durationOf.acceleration + this.durationOf.spinning) {
 	      this.stop();
 	    }
 	  }
@@ -50,23 +54,11 @@ define("spinner", ["spinstate", "easing"], function(SpinState, Easing){
 	    this.spinData.acceleration = this.brakingHeight / (this.spinData.brakingDuration * this.spinData.brakingDuration);
 	  }
 
-	  this.reel.render();
+	  this.reel.move(this.getSpinDelta());
 	}
 
-	Spinner.prototype.stop = function(){
-	  if (SpinState.hasBeenStopped(this.state)) return;
-	  this.state = SpinState.HAS_BEEN_STOPPED;
-	  this.spinStopTime = Date.now();
-	  this.startBrakingTime = this.spinStopTime + (this.reel.spinPos % this.reel.iconH / this.speed) * 1000;
-	}
-	Spinner.prototype.spin = function(){
-	  if (SpinState.isSpinning(this.state)) return;
-	  this.spinStartTime = Date.now();
-	  this.startSpinY = this.reel.spinPos;
-	  this.state = SpinState.ACCELERATING;
-	};
 	Spinner.prototype.getTimeFrom = function(time) {
-	  return (this.currentTime - time) / 1000;
+	  return (this.timeOf.now - time) / 1000;
 	};
 	Spinner.prototype.getSpinDelta = function() {
 	  var lastSpinY = this.spinY;
@@ -81,9 +73,31 @@ define("spinner", ["spinstate", "easing"], function(SpinState, Easing){
 	    }
 	    this.spinY = this.brakingStart + this.brakingHeight - this.spinData.acceleration * 2 * te*te / 2;
 	  } else { 
-	    this.spinY = this.startSpinY + this.speed * this.getTimeFrom(this.spinStartTime);
+	    this.spinY = this.startSpinY + this.speed * this.getTimeFrom(this.timeOf.spinStart);
 	  }
 	  return this.spinY - lastSpinY;
 	}
+
+	Spinner.prototype.stop = function(){
+	  if (SpinState.hasBeenStopped(this.state)) return;
+	  this.state = SpinState.HAS_BEEN_STOPPED;
+	  this.timeOf.spinStop = Date.now() / 1000;
+	  this.startBrakingTime = this.timeOf.spinStop + (this.reel.spinPos % this.reel.iconH / this.speed);
+	};
+
+	Spinner.prototype.spin = function(){
+	  if (SpinState.isSpinning(this.state)) return;
+	  this.timeOf.spinStart = Date.now();
+	  this.startSpinY = this.reel.spinPos;
+	  this.state = SpinState.ACCELERATING;
+	};
+	Spinner.prototype.toggleSpin = function(){
+	    if (this.state === SpinState.STOPPED){
+	      this.spin();
+	    } else {
+	      this.stop();
+	    }
+	}
+
 	return Spinner;
 });
