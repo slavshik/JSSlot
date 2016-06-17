@@ -8,9 +8,9 @@ define("spinner", ["spinstate", "easing"], function(SpinState, Easing){
 	        max:900,
 	    };
 	    this.durationOf = {
-	    	acceleration:1, 
-	        spinning:1.5, 
-	        braking:2.5
+	    	acceleration:0.5, 
+	        spinning:20, 
+	        braking:2
 	    }
 	    this.timeOf = {
 	    	now: -1,
@@ -38,14 +38,12 @@ define("spinner", ["spinstate", "easing"], function(SpinState, Easing){
       switch(this.state) {
       	case SpinState.ACCELERATING:
 			progress = this.getTimeFrom(this.timeOf.spinStart) / this.durationOf.acceleration;
-		    easedProgress = Easing.inQuad(progress);
-		    
-		    this.speed.current = easedProgress * this.speed.max;
-		    if (progress >= 1) {
-		      this.speed.current = this.speed.max;
-		      this.speed.acceleration = 0;
-		      this.state = SpinState.ACCELERATED;
+		    if (progress > 1) {
+		    	progress = 1;
+		      	this.state = SpinState.ACCELERATED;
 		    }
+		    easedProgress = Easing.outQuad(progress);
+		    this.speed.current = easedProgress * this.speed.max;
       		break;
   		case SpinState.ACCELERATED:
   			if (this.getTimeFrom(this.timeOf.spinStart) > this.durationOf.acceleration + this.durationOf.spinning) {
@@ -54,10 +52,14 @@ define("spinner", ["spinstate", "easing"], function(SpinState, Easing){
   			break;
 		case SpinState.HAS_BEEN_STOPPED:
 			if (this.getTimeFrom(this.timeOf.brakingStart) > 0) {
-				this.brakingStart = this.spinY;
-			    this.brakingHeight = Math.abs(Math.ceil(this.speed.current / this.reel.iconH) * this.reel.iconH - this.reel.spinPos);
+			    this.brakingHeight = Math.abs(Math.ceil(this.speed.current / this.reel.iconH) * this.reel.iconH);
 			    this.speed.acceleration = this.brakingHeight / (this.durationOf.braking * this.durationOf.braking);
 			    this.state = SpinState.BRAKING;
+			}
+		case SpinState.BRAKING:
+			var te = this.durationOf.braking - this.getTimeFrom(this.timeOf.brakingStart);
+			if (te <=0) {
+				this.state = SpinState.STOPPED;
 			}
 			break;
       }
@@ -71,15 +73,13 @@ define("spinner", ["spinstate", "easing"], function(SpinState, Easing){
 	Spinner.prototype.getSpinDelta = function() {
 	  var lastSpinY = this.spinY;
 	  if (this.state === SpinState.BRAKING) {
+	    
 	    var te = this.durationOf.braking - this.getTimeFrom(this.timeOf.brakingStart);
-	    if (te <= 0) {
-	       te = 0;
-	       this.state = SpinState.STOPPED;
-	       var remainingValue = this.reel.spinPos - this.spinY % this.reel.spinMax;
+	    this.spinY = this.brakingStart + this.brakingHeight - this.speed.acceleration * 2 * te*te / 2;
+	  } else if (this.state === SpinState.STOPPED) {
+	  		var remainingValue = this.reel.spinPos - this.spinY % this.reel.spinMax;
 	       this.spinY = this.reel.spinPos + remainingValue;
 		   return remainingValue;
-	    }
-	    this.spinY = this.brakingStart + this.brakingHeight - this.speed.acceleration * 2 * te*te / 2;
 	  } else { 
 	    this.spinY = this.startSpinY + this.speed.current * this.getTimeFrom(this.timeOf.spinStart);
 	  }
@@ -87,15 +87,18 @@ define("spinner", ["spinstate", "easing"], function(SpinState, Easing){
 	}
 	Spinner.prototype.stop = function(){
 	  if (SpinState.hasBeenStopped(this.state)) return;
+	  
+	  this.timeOf.spinStop = this.timeOf.now;
+	  var elapsedSpinningHeight = this.reel.spinMax - this.reel.spinPos;
+	  this.brakingStart = this.spinY + elapsedSpinningHeight;
+	  this.timeOf.brakingStart = this.timeOf.spinStop + parseInt(elapsedSpinningHeight / this.speed.current * 1000);
 	  this.state = SpinState.HAS_BEEN_STOPPED;
-	  this.timeOf.spinStop = Date.now();
-	  this.timeOf.brakingStart = this.timeOf.spinStop;//this.timeOf.spinStop + this.reel.spinPos % this.reel.iconH / this.speed.current * 1000;
 	};
 
 	Spinner.prototype.spin = function(){
 	  if (SpinState.isSpinning(this.state)) return;
 	  this.timeOf.spinStart = Date.now();
-	  this.startSpinY = this.reel.spinPos;
+	  this.startSpinY = this.spinY = this.reel.spinPos;
 	  this.state = SpinState.ACCELERATING;
 	};
 	Spinner.prototype.toggleSpin = function(){
