@@ -8,7 +8,7 @@ define("spinstate", [], function(){
 		BRAKING: 7,            // 111
 
 		hasBeenStopped: function(state){
-		  return state >> 1 & 1;
+		  return state & 2;
 		},
 		isSpinning: function(state){
 		  return state & 1;
