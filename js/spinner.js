@@ -40,12 +40,12 @@ define(["spinstate", "easing"], function(SpinState, Easing){
 			progress = this.getTimeFrom(this.timeOf.spinStart) / this.durationOf.acceleration;
 		    if (progress > 1) {
 		    	progress = 1;
-		      	this.state = SpinState.ACCELERATED;
+		      	this.state = SpinState.SPINNING;
 		    }
 		    easedProgress = Easing.outQuad(progress);
 		    this.speed.current = easedProgress * this.speed.max;
       		break;
-  		case SpinState.ACCELERATED:
+  		case SpinState.SPINNING:
   			if (this.getTimeFrom(this.timeOf.spinStart) > this.durationOf.acceleration + this.durationOf.spinning) {
 		      this.stop();
 		    }

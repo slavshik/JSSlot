@@ -62,15 +62,6 @@ define(['libs/easeljs-0.8.2.combined'], function(){
 
 		this.reel = reel;
 		this.icons = [];
-
-		this.applyMask();
-	}
-
-	ReelView.prototype.applyMask = function(){
-		var msk = new createjs.Shape();
-		msk.graphics.beginFill("red")
-		msk.graphics.drawRect(0,0, this.reel.iconH*2, (this.reel.reelSize - 1) * this.reel.iconH);
-		this.iconsCont.mask = msk;
 	}
 
 	ReelView.prototype.update = function(){
@@ -86,8 +77,33 @@ define(['libs/easeljs-0.8.2.combined'], function(){
 		}
 		this.spinPos.y = this.reel.spinPos;
 	}
-
+	var GameView = function(game){
+		this.game = game;
+		this.stage = new createjs.Container();
+		this.reels = [];
+		for (var i = 0; i < this.game.spinners.length; i++) {
+			var reelView = new ReelView(this.game.spinners[i].reel);
+			reelView.iconsCont.x = i * this.game.spinners[i].reel.iconH;
+			this.stage.addChild(reelView.iconsCont);
+			this.reels.push(reelView);
+		}
+		this.applyMask();
+	};
+	GameView.prototype.applyMask = function() {
+		var msk = new createjs.Shape();
+		msk.graphics.beginFill("red")
+		msk.graphics.drawRect(0,0,  this.game.config.iconH * this.reels.length, this.game.config.reelSize * this.game.config.iconH);
+		this.stage.mask = msk;
+	}
+	GameView.prototype.update = function() {
+		if(this.game.update()){
+			for (var i = 0; i < this.reels.length; i++) {
+				this.reels[i].update();
+			}		
+		}
+	}
 	return {
+		GameView:GameView,
 		ReelView:ReelView,
 		stage:stage
 	}
