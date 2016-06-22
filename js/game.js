@@ -1,4 +1,4 @@
-define(["reel", "spinner"], function(Reel, Spinner){
+define(["reel", "spinner", "spinstate"], function(Reel, Spinner, SpinState){
 
 	var Game = function(config) {
 		this.config = this.validateConfig(config);
@@ -38,9 +38,22 @@ define(["reel", "spinner"], function(Reel, Spinner){
 		return true; //TODO: 
 	};
 	Game.prototype.toggleSpin = function(){
-		for (var i = 0; i < this.config.reels; i++) {
-			this.spinners[i].toggleSpin();
+		var gameState = this.getGameState();
+		
+		for (var i = 0; i < this.spinners.length; i++) {
+			if(SpinState.isSpinning(gameState)) {
+				this.spinners[i].stop();
+			} else if (gameState === SpinState.STOPPED) {
+				setTimeout(this.spinners[i].spin.bind(this.spinners[i]), 200 + i * 200);
+			}
 		}
+	};
+	Game.prototype.getGameState = function(){
+		var state = 0;
+		for (var i = 0; i < this.spinners.length; i++) {
+			state |= this.spinners[i].state;
+		}
+		return state;
 	};
 	return Game;
 })

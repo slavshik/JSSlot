@@ -95,19 +95,12 @@ define(["spinstate", "easing"], function(SpinState, Easing){
 	  this.state = SpinState.HAS_BEEN_STOPPED;
 	};
 
-	Spinner.prototype.spin = function(){
+	Spinner.prototype.spin = function(delay){
 	  if (SpinState.isSpinning(this.state)) return;
 	  this.timeOf.spinStart = Date.now();
 	  this.startSpinY = this.spinY = this.reel.spinPos;
 	  this.state = SpinState.ACCELERATING;
 	};
-	Spinner.prototype.toggleSpin = function(){
-	    if (this.state === SpinState.STOPPED){
-	      this.spin();
-	    } else {
-	      this.stop();
-	    }
-	}
 
 	return Spinner;
 });

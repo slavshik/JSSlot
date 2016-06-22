@@ -1,7 +1,7 @@
 define([], function(){
 	return {
 
-		STOPPED: 4,            // 101
+		STOPPED: 4,            // 100
 		ACCELERATING: 3,       // 011
 		SPINNING: 2, 	       // 010
 		HAS_BEEN_STOPPED: 6,   // 110
