@@ -1,4 +1,4 @@
-define("spinner", ["spinstate", "easing"], function(SpinState, Easing){
+define(["spinstate", "easing"], function(SpinState, Easing){
 
 	function Spinner(reel){
 	  	this.reel = reel;
@@ -9,7 +9,7 @@ define("spinner", ["spinstate", "easing"], function(SpinState, Easing){
 	    };
 	    this.durationOf = {
 	    	acceleration:0.5, 
-	        spinning:20, 
+	        spinning:7, 
 	        braking:2
 	    }
 	    this.timeOf = {

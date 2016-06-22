@@ -1,0 +1,24 @@
+{
+  "name": "js-slot",
+  "version": "0.0.0",
+  "description": "Simple example of slot machine",
+  "main": "index.html",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kvint/JSSlot.git"
+  },
+  "author": "Alexander Slavschik",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kvint/JSSlot/issues"
+  },
+  "homepage": "https://github.com/kvint/JSSlot#readme",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "jasmine": "^2.4.1",
+    "squirejs": "^0.2.1"
+  }
+}

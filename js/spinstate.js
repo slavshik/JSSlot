@@ -1,6 +1,6 @@
-define("spinstate", [], function(){
-
+define([], function(){
 	return {
+
 		STOPPED: 0,            // 000
 		ACCELERATING: 1,       // 001
 		ACCELERATED: 5,        // 101
@@ -8,10 +8,13 @@ define("spinstate", [], function(){
 		BRAKING: 7,            // 111
 
 		hasBeenStopped: function(state){
-		  return state & 2;
+		  return this.hasAllBitsFrom(state, 2);
 		},
 		isSpinning: function(state){
-		  return state & 1;
-		}
+		  return this.hasAllBitsFrom(state, 1);
+		},
+		hasAllBitsFrom: function(number, bit){
+			return (number & bit) === bit;
+		}	
 	}
 });

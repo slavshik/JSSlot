@@ -1,4 +1,4 @@
-define('ui', ['libs/easeljs-0.8.2.combined'], function(){
+define(['libs/easeljs-0.8.2.combined'], function(){
 	var stage = new createjs.Stage('canvas')
 
 	function BitmapPool(){
