@@ -1,4 +1,4 @@
-define("app", ["libs/easeljs-0.8.2.combined", "reel", "ui", "spinner"], function(easel, Reel, ui, Spinner){
+define(["libs/easeljs-0.8.2.combined", "reel", "ui", "spinner"], function(easel, Reel, ui, Spinner){
 	
 	var reel = new Reel();
 	var spinner = new Spinner(reel);

@@ -1,4 +1,4 @@
-define('easing', [], function(){
+define([], function(){
   return {
     // no easing, no acceleration
     linear: function (t) { return t },

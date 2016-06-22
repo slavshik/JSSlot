@@ -1,20 +1,17 @@
 define([], function(){
 	return {
 
-		STOPPED: 0,            // 000
-		ACCELERATING: 1,       // 001
-		ACCELERATED: 5,        // 101
-		HAS_BEEN_STOPPED: 3,   // 011
+		STOPPED: 4,            // 101
+		ACCELERATING: 3,       // 011
+		SPINNING: 2, 	       // 010
+		HAS_BEEN_STOPPED: 6,   // 110
 		BRAKING: 7,            // 111
 
 		hasBeenStopped: function(state){
-		  return this.hasAllBitsFrom(state, 2);
+		  return (state & this.STOPPED) === this.STOPPED;
 		},
 		isSpinning: function(state){
-		  return this.hasAllBitsFrom(state, 1);
-		},
-		hasAllBitsFrom: function(number, bit){
-			return (number & bit) === bit;
-		}	
+		  return (state & this.SPINNING) === this.SPINNING;
+		}
 	}
 });
