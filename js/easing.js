@@ -25,6 +25,15 @@ define([], function(){
     // decelerating to zero velocity
     outQuint: function (t) { return 1+(--t)*t*t*t*t },
     // acceleration until halfway, then deceleration 
-    inOutQuint: function (t) { return t<.5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t }
+    inOutQuint: function (t) { return t<.5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t },
+
+    easeOutCirc: function (t, b, c, d) {
+        return c * Math.sqrt(1 - (t=t/d-1)*t) + b;
+    },
+    easeInCirc: function (t, b, c, d) {
+        return -c * (Math.sqrt(1 - (t/=d)*t) - 1) + b;
+    }
+    //var s:Number = !Boolean(p_params) || isNaN(p_params.overshoot) ? 1.70158 : p_params.overshoot;
+    //return c*(t/=d)*t*((s+1)*t - s) + b;
   }
 });
